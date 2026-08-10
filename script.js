@@ -1,50 +1,41 @@
 /* ================= MUSIC ================= */
 
-const music = new Audio("music/hey-rangule.mp3");
+const music = document.getElementById("birthdaySong");
+const musicBtn = document.getElementById("musicBtn");
+
+let musicPlaying = false;
 
 music.loop = true;
 music.volume = 0.65;
-
-let musicPlaying = false;
 
 
 /* ================= OPEN SURPRISE ================= */
 
 const openBtn = document.getElementById("openBtn");
+const opening = document.getElementById("opening");
 
-openBtn.addEventListener("click", function(){
+openBtn.addEventListener("click", function () {
 
-    const opening = document.getElementById("opening");
-    const website = document.getElementById("website");
-
+    // Hide opening screen
     opening.classList.add("hide");
 
-    setTimeout(() => {
-
-        website.classList.add("show");
-
-    },500);
-
-
-    /* Start song after user interaction */
-
+    // Start music after user interaction
     music.play()
-    .then(() => {
+        .then(() => {
 
-        musicPlaying = true;
+            musicPlaying = true;
+            musicBtn.innerHTML = "🔊";
 
-        document.getElementById("musicBtn").innerHTML = "🔊";
+        })
+        .catch(() => {
 
-    })
-    .catch(() => {
+            musicPlaying = false;
+            musicBtn.innerHTML = "🎵";
 
-        document.getElementById("musicBtn").innerHTML = "🎵";
+        });
 
-    });
-
-
+    // Start beautiful effects
     createPetals();
-
     createSparkles();
 
 });
@@ -52,11 +43,9 @@ openBtn.addEventListener("click", function(){
 
 /* ================= MUSIC BUTTON ================= */
 
-const musicBtn = document.getElementById("musicBtn");
+musicBtn.addEventListener("click", function () {
 
-musicBtn.addEventListener("click", function(){
-
-    if(musicPlaying){
+    if (musicPlaying) {
 
         music.pause();
 
@@ -64,24 +53,33 @@ musicBtn.addEventListener("click", function(){
 
         musicBtn.innerHTML = "🎵";
 
-    }else{
+    } else {
 
-        music.play();
+        music.play()
+            .then(() => {
 
-        musicPlaying = true;
+                musicPlaying = true;
+                musicBtn.innerHTML = "🔊";
 
-        musicBtn.innerHTML = "🔊";
+            })
+            .catch(() => {
+
+                musicBtn.innerHTML = "🎵";
+
+            });
 
     }
 
 });
 
 
-/* ================= LETTER TYPEWRITER ================= */
+/* ================= LETTER ================= */
 
 const letter = `Happy Birthday! 🎂
 
 On your special day, I just want to say how grateful I am to have a wonderful friend like you.
+
+From our school days to where we are today, so many things have changed, but the beautiful memories we created will always remain special.
 
 Thank you for all the laughter, kindness and beautiful memories we've shared together.
 
@@ -89,28 +87,34 @@ You are an amazing person, and I truly hope this year brings you happiness, succ
 
 Keep smiling, keep believing in yourself and never stop chasing your dreams.
 
-May your birthday be filled with love, joy and unforgettable moments.
+May your birthday be filled with happiness, joy and unforgettable moments.
 
-Happy Birthday once again! ❤️`;
-
+Happy Birthday once again, Reshma! ❤️`;
 
 let letterIndex = 0;
 
 const letterElement = document.getElementById("letterText");
 
 
-function typeLetter(){
+function typeLetter() {
 
-    if(letterIndex < letter.length){
+    if (letterIndex < letter.length) {
 
-        letterElement.innerHTML +=
-            letter.charAt(letterIndex) === "\n"
-            ? "<br>"
-            : letter.charAt(letterIndex);
+        const character = letter.charAt(letterIndex);
+
+        if (character === "\n") {
+
+            letterElement.innerHTML += "<br>";
+
+        } else {
+
+            letterElement.innerHTML += character;
+
+        }
 
         letterIndex++;
 
-        setTimeout(typeLetter,35);
+        setTimeout(typeLetter, 35);
 
     }
 
@@ -130,17 +134,21 @@ sections.forEach(section => {
 });
 
 
-const observer = new IntersectionObserver((entries) => {
+const observer = new IntersectionObserver(
+    (entries) => {
 
-    entries.forEach(entry => {
+        entries.forEach(entry => {
 
-        if(entry.isIntersecting){
+            if (entry.isIntersecting) {
 
-            entry.target.classList.add("visible");
+                entry.target.classList.add("visible");
 
-            if(entry.target.classList.contains("letter-section")){
 
-                if(letterIndex === 0){
+                // Start letter when user reaches letter section
+                if (
+                    entry.target.classList.contains("letter-section") &&
+                    letterIndex === 0
+                ) {
 
                     typeLetter();
 
@@ -148,13 +156,13 @@ const observer = new IntersectionObserver((entries) => {
 
             }
 
-        }
+        });
 
-    });
-
-},{
-    threshold:.15
-});
+    },
+    {
+        threshold: 0.15
+    }
+);
 
 
 sections.forEach(section => {
@@ -166,7 +174,13 @@ sections.forEach(section => {
 
 /* ================= FALLING PETALS ================= */
 
-function createPetals(){
+function createPetals() {
+
+    // Prevent creating multiple intervals
+    if (window.petalsStarted) return;
+
+    window.petalsStarted = true;
+
 
     setInterval(() => {
 
@@ -180,10 +194,10 @@ function createPetals(){
             Math.random() * 100 + "vw";
 
         petal.style.fontSize =
-            (10 + Math.random()*15) + "px";
+            (10 + Math.random() * 15) + "px";
 
         petal.style.animationDuration =
-            (7 + Math.random()*7) + "s";
+            (7 + Math.random() * 7) + "s";
 
         document.body.appendChild(petal);
 
@@ -192,29 +206,34 @@ function createPetals(){
 
             petal.remove();
 
-        },15000);
+        }, 15000);
 
-    },900);
+    }, 900);
 
 }
 
 
 /* ================= SPARKLES ================= */
 
-function createSparkles(){
+function createSparkles() {
+
+    // Prevent multiple intervals
+    if (window.sparklesStarted) return;
+
+    window.sparklesStarted = true;
+
 
     setInterval(() => {
 
-        const sparkle =
-            document.createElement("div");
+        const sparkle = document.createElement("div");
 
         sparkle.className = "sparkle";
 
         sparkle.style.left =
-            Math.random()*100 + "vw";
+            Math.random() * 100 + "vw";
 
         sparkle.style.top =
-            Math.random()*100 + "vh";
+            Math.random() * 100 + "vh";
 
         document.body.appendChild(sparkle);
 
@@ -223,50 +242,51 @@ function createSparkles(){
 
             sparkle.remove();
 
-        },800);
+        }, 800);
 
-    },400);
+    }, 400);
 
 }
 
 
 /* ================= FINAL CELEBRATION ================= */
 
-document.getElementById("celebrateBtn")
-.addEventListener("click", function(){
+const celebrateBtn =
+    document.getElementById("celebrateBtn");
 
-    const finalMessage =
-        document.getElementById("finalMessage");
+const finalMessage =
+    document.getElementById("finalMessage");
 
+
+celebrateBtn.addEventListener("click", function () {
+
+    // Show final message
     finalMessage.style.display = "block";
 
 
-    /* Confetti */
+    // Confetti
+    for (let i = 0; i < 80; i++) {
 
-    for(let i=0;i<80;i++){
-
-        const piece =
-            document.createElement("div");
+        const piece = document.createElement("div");
 
         piece.innerHTML =
-            ["✨","💖","🎉","🌸","💕"]
-            [Math.floor(Math.random()*5)];
+            ["✨", "💖", "🎉", "🌸", "💕"]
+            [Math.floor(Math.random() * 5)];
 
         piece.style.position = "fixed";
 
         piece.style.left =
-            Math.random()*100 + "vw";
+            Math.random() * 100 + "vw";
 
-        piece.style.top =
-            "-30px";
+        piece.style.top = "-30px";
 
         piece.style.fontSize =
-            (15+Math.random()*20)+"px";
+            (15 + Math.random() * 20) + "px";
 
         piece.style.zIndex = "9999";
 
         piece.style.animation =
-            `confettiFall ${3+Math.random()*3}s linear forwards`;
+            `confettiFall ${3 + Math.random() * 3}s linear forwards`;
 
         document.body.appendChild(piece);
 
@@ -275,7 +295,7 @@ document.getElementById("celebrateBtn")
 
             piece.remove();
 
-        },6000);
+        }, 6000);
 
     }
 
@@ -288,15 +308,15 @@ const style = document.createElement("style");
 
 style.innerHTML = `
 
-@keyframes confettiFall{
+@keyframes confettiFall {
 
-    to{
+    to {
 
         transform:
         translateY(110vh)
         rotate(720deg);
 
-        opacity:0;
+        opacity: 0;
 
     }
 
