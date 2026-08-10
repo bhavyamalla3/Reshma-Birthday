@@ -1,6 +1,6 @@
 /* ================= MUSIC ================= */
 
-const music = new Audio("music/hey-rangule.mp3");
+const music = new Audio("hey-rangule.mp3");
 
 music.loop = true;
 music.volume = 0.65;
